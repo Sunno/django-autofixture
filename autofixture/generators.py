@@ -528,10 +528,16 @@ class InstanceGenerator(Generator):
         fieldname: value
         fieldname__exact: value
         fieldname__iexact: value
+
+    NOTE: Only supported ``limit_choices_to`` as dictionaries.
     '''
     def __init__(self, autofixture, limit_choices_to=None, *args, **kwargs):
         self.autofixture = autofixture
         limit_choices_to = limit_choices_to or {}
+
+        if not isinstance(limit_choices_to, dict):
+            limit_choices_to = {}
+
         for lookup, value in limit_choices_to.items():
             bits = lookup.split('__')
             if len(bits) == 1 or \
