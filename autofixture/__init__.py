@@ -2,17 +2,16 @@
 import sys
 import warnings
 from autofixture.base import AutoFixture
-from autofixture.constraints import InvalidConstraint
 from autofixture.compat import getargnames
 
 
 if sys.version_info[0] < 3:
-    string_types = basestring
+    string_types = basestring  # noqa
 else:
     string_types = str
 
 
-__version__ = '0.12.2.dev1'
+__version__ = '0.12.2.dev2'
 
 
 REGISTRY = {}
@@ -24,15 +23,16 @@ def register(model, autofixture, overwrite=False, fail_silently=False):
 
     Arguments:
 
-        *model* can be either a model class or a string that contains the model's
-        app label and class name seperated by a dot, e.g. ``"app.ModelClass"``.
+        *model* can be either a model class or a string that contains the
+        model's app label and class name seperated by a dot,
+        e.g. ``"app.ModelClass"``.
 
         *autofixture* is the :mod:`AutoFixture` subclass that shall be used to
         generated instances of *model*.
 
         By default :func:`register` will raise :exc:`ValueError` if the given
-        *model* is already registered. You can overwrite the registered *model* if
-        you pass ``True`` to the *overwrite* argument.
+        *model* is already registered. You can overwrite the registered
+        *model* if you pass ``True`` to the *overwrite* argument.
 
         The :exc:`ValueError` that is usually raised if a model is already
         registered can be suppressed by passing ``True`` to the *fail_silently*
@@ -110,7 +110,8 @@ def create(model, count, *args, **kwargs):
     superusers::
 
         import autofixture
-        admins = autofixture.create('auth.User', 10, field_values={'is_superuser': True})
+        admins = autofixture.create(
+            'auth.User', 10, field_values={'is_superuser': True})
 
     .. note:: See :ref:`AutoFixture` for more information.
 
@@ -148,6 +149,7 @@ def create_one(model, *args, **kwargs):
 
 LOADING = False
 
+
 def autodiscover():
     '''
     Auto-discover INSTALLED_APPS autofixtures.py and tests.py modules and fail
@@ -159,8 +161,8 @@ def autodiscover():
     # Bail out if autodiscover didn't finish loading from a previous call so
     # that we avoid running autodiscover again when the URLconf is loaded by
     # the exception handler to resolve the handler500 view.  This prevents an
-    # autofixtures.py module with errors from re-registering models and raising a
-    # spurious AlreadyRegistered exception (see #8245).
+    # autofixtures.py module with errors from re-registering models and
+    # raising a spurious AlreadyRegistered exception (see #8245).
     global LOADING
     if LOADING:
         return
@@ -196,10 +198,10 @@ def autodiscover():
                 continue
 
     for app, app_path in app_paths.items():
-        # Step 2: use imp.find_module to find the app's autofixtures.py. For some
-        # reason imp.find_module raises ImportError if the app can't be found
-        # but doesn't actually try to import the module. So skip this app if
-        # its autofixtures.py doesn't exist
+        # Step 2: use imp.find_module to find the app's autofixtures.py.
+        # For some reason imp.find_module raises ImportError if the app can't
+        # be found but doesn't actually try to import the module. So skip this
+        # app if its autofixtures.py doesn't exist
         try:
             file, _, _ = imp.find_module('autofixtures', app_path)
         except ImportError:
@@ -208,13 +210,13 @@ def autodiscover():
             if file:
                 file.close()
 
-        # Step 3: import the app's autofixtures file. If this has errors we want them
-        # to bubble up.
+        # Step 3: import the app's autofixtures file. If this has errors we
+        # want them to bubble up.
         try:
             importlib.import_module("%s.autofixtures" % app)
         except Exception as e:
-            warnings.warn(u'Error while importing %s.autofixtures: %r' %
-                (app, e))
+            warnings.warn(
+                u'Error while importing %s.autofixtures: %r' % (app, e))
 
     for app, app_path in app_paths.items():
         try:
@@ -228,8 +230,8 @@ def autodiscover():
         try:
             importlib.import_module("%s.tests" % app)
         except Exception as e:
-            warnings.warn(u'Error while importing %s.tests: %r' %
-                (app, e))
+            warnings.warn(
+                u'Error while importing %s.tests: %r' % (app, e))
 
     # autodiscover was successful, reset loading flag.
     LOADING = False
